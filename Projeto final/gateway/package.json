@@ -1,0 +1,9 @@
+{
+    "name": "gateway-app",
+    "version": "1.0.0",
+    "description": "Gateway Application",
+    "dependencies": {
+      "express": "^4.17.1"
+    }
+  }
+  
