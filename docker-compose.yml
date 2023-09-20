@@ -1,0 +1,37 @@
+version: '3'
+services:
+  mysql-container:
+    build: 
+      context: ./mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: dbpassword
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpassword
+      
+
+  app-container:
+    build:
+      context: ./app # Caminho para o diretório contendo seu Dockerfile e código
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql-container
+    environment:
+      MYSQL_HOST: mysql-container
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpassword
+      MYSQL_DATABASE: dbname
+
+  gateway-container:
+    build:
+      context: ./gateway # caminho para o diretório contendo seu Dockerfile e código
+    ports:
+      - "80:3000"
+    depends_on:
+      - app-container
+    environment:
+      APP_HOST: app-container
+      APP_PORT: 3000
