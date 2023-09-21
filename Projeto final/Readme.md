@@ -11,4 +11,10 @@ Antes de executar o projeto, verifique se você tem o Docker e o Docker Compose 
 ``` bash
     docker-compose up --build -d
 ```
-3. No seu browser, 
+## Acessando o aplicativo ##
+O aplicativo estará disponível em localhost:1000/users para listar os usuários.
+
+localhost:2000/newsletter para listar os usuários e a mensagem padrão.
+
+localhost:2000/form para abir o formulário de cadastramento.
+
