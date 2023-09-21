@@ -1,37 +1,50 @@
 version: '3'
 services:
-  mysql-container:
-    build: 
-      context: ./mysql
-    ports:
-      - "3306:3306"
+  mydb:
+    image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: dbpassword
-      MYSQL_DATABASE: dbname
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: dbpassword
-      
+      mysql_USER: myuser
+      mysql_PASSWORD: mypassword
+      mysql_DB: mydatabase
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - internal_network
 
-  app-container:
+  myapp:
     build:
-      context: ./app # Caminho para o diretório contendo seu Dockerfile e código
+      context: ./app
     ports:
-      - "3000:3000"
+      - "1000:1000"
     depends_on:
-      - mysql-container
+      - mydb
     environment:
-      MYSQL_HOST: mysql-container
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: dbpassword
-      MYSQL_DATABASE: dbname
+      DB_HOST: mydb
+      DB_PORT: 5432
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: mydatabase
+    networks:
+      - internal_network
 
-  gateway-container:
+  mygateway:
     build:
-      context: ./gateway # caminho para o diretório contendo seu Dockerfile e código
+      context: ./gateway
     ports:
-      - "80:3000"
+      - "2000:2000"
     depends_on:
-      - app-container
+      - mydb
     environment:
-      APP_HOST: app-container
-      APP_PORT: 3000
+      DB_HOST: mydb
+      DB_PORT: 5432
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: mydatabase
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+
+volumes:
+  mysql_data:

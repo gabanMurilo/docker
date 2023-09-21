@@ -1,70 +1,57 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var mysql = require('mysql2/promise');
+const express = require('express');
+const app = express();
+const { Pool } = require('pg'); // Importe a classe Pool do pacote 'pg'
 
-var app = express();
-var PORT = process.env.PORT || 3000;
+// Configurações do banco de dados
+const dbConfig = {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+};
 
-app.use(bodyParser.json());
+const pool = new Pool(dbConfig);
 
-// Cria uma conexão mysql
-var pool = mysql.createPool({
-  host: 'mysql-container', 
-  user: 'dbuser',
-  password: 'dbpassword',
-  database: 'dbname',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+// Endpoint para /users
+app.get('/users', async (req, res) => {
+  try {
+    // Consulta SQL para buscar todos os usuários
+    const query = 'SELECT id, nome, email FROM users';
+    
+    // Execute a consulta usando o pool
+    const result = await pool.query(query);
 
-// GET /users endpoint para returnar uma lista de usuarios
-app.get('/users', function(req, res) {
-  pool.query('SELECT * FROM newsletter_users')
-    .then(function(rows) {
-      res.json(rows[0]);
-    })
-    .catch(function(error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    });
-});
-
-// POST /users endpoint para criar um novo usuário
-app.post('/users', function(req, res) {
-  var name = req.body.name;
-  var email = req.body.email;
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
+    // Envie a lista de usuários como resposta
+    res.json({ users: result.rows });
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuários' });
   }
-
-  pool.query('INSERT INTO newsletter_users (name, email) VALUES (?, ?)', [name, email])
-    .then(function() {
-      res.status(201).json({ message: 'User created successfully' });
-    })
-    .catch(function(error) {
-      console.error('Error creating user:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    });
 });
 
-// POST /newsletter endpoint para enviar uma mensagem newsletter
-app.post('/newsletter', function(req, res) {
-  var message = req.body.message;
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+// Endpoint para /newsletter
+app.get('/newsletter', async (req, res) => {
+  try {
+    const query = 'SELECT * FROM users';
+    
+    const result = await pool.query(query);
+
+    const message = req.query.message || 'Mensagem padrão se nenhuma mensagem for especificada';
+
+    res.json({ users: result.rows, message });
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuários' });
   }
-
-  pool.query('SELECT name, email FROM newsletter_users')
-    .then(function(rows) {
-      res.json({ users: rows[0], message: message });
-    })
-    .catch(function(error) {
-      console.error('Error sending newsletter:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    });
 });
 
-app.listen(PORT, function() {
-  console.log('Server is running on port ' + PORT);
+app.use((req, res) => {
+  const welcomeMessage = 'O site do container { APP } está rodando!';
+  res.send(welcomeMessage);
+});
+
+const port = 1000;
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`);
 });

@@ -1,20 +1,20 @@
-# Usa a imagem oficial Node.js como base
+# Use uma imagem de node.js como base
 FROM node:14
 
-# Diretorio padrão do container
-WORKDIR /gateway
+# Defina o diretório de trabalho dentro do container
+WORKDIR /app
 
-# Copia o package para o container
+# Copie o arquivo package.json e package-lock.json para instalar dependências
 COPY package*.json ./
 
-# Instalação de dependências
+# Instale as dependências do gateway
 RUN npm install
 
-# Copia os demais codigos para o container
-COPY . .
+# Copie os arquivos JavaScript do gateway para o container
+COPY gateway.js ./
 
-# Porta que a aplicação utilizará
-EXPOSE 3000
+# Exponha a porta 80 para o gateway
+EXPOSE 80
 
-# comando para iniciar a aplicação
-CMD ["node", "app.js"]
+# Comando para iniciar o gateway
+CMD ["node", "gateway.js"]

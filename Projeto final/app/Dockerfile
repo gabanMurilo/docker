@@ -1,20 +1,20 @@
-# Usa a imagem oficial Node.js como base
+# Use uma imagem de node.js como base
 FROM node:14
 
-# Diretorio padrão do container
+# Defina o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia o package para o container
+# Copie o arquivo package.json e package-lock.json para instalar dependências
 COPY package*.json ./
 
-# Instalação de dependências
+# Instale as dependências do aplicativo
 RUN npm install
 
-# Copia os demais codigos para o container
-COPY . .
+# Copie os arquivos JavaScript do aplicativo para o container
+COPY app.js ./
 
-# Porta que a aplicação utilizará
-EXPOSE 3000
+# Exponha a porta 8080 para o aplicativo
+EXPOSE 8080
 
-# comando para iniciar a aplicação
+# Comando para iniciar o aplicativo
 CMD ["node", "app.js"]
