@@ -2,6 +2,7 @@
 FROM mysql:latest
 
 # Defina as variáveis de ambiente para criar o banco de dados e usuário
+ENV MYSQL_ROOT_PASSWORD=password
 ENV mysql_USER=user
 ENV mysql_PASSWORD=password
 ENV mysql_DB=mydb

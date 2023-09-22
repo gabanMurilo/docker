@@ -16,5 +16,8 @@ O aplicativo estará disponível em localhost:1000/users para listar os usuário
 
 localhost:2000/newsletter para listar os usuários e a mensagem padrão.
 
+localhost:2000/newsletter?message=TEXTO para listar os usuários e a mensagem TEXTO.
+
 localhost:2000/form para abir o formulário de cadastramento.
 
+localhost:2000/registered para listar os usuários cadastrados.

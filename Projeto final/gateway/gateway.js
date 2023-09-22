@@ -46,7 +46,7 @@ app.post('/registered', async (req, res) => {
     const { nome, email } = req.body;
 
     // Lógica para adicionar o usuário ao banco de dados
-    const query = 'INSERT INTO users (nome, email) VALUES ($1, $2)';
+    const query = 'INSERT INTO users ( nome, email) VALUES ($1, $2)';
     const values = [nome, email];
     await pool.query(query, values);
 
